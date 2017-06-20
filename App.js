@@ -38,13 +38,21 @@ var screen = Dimensions.get('window')
 
 
 class HomeScreen extends React.Component {
-    Decks;
+    
+    constructor() {
+        super();
+        this.state = {
+            count: 0,
+            Deck: {},
+        }
+    }
+    
     static navigationOptions = {
         title: 'Card Counting Buddy',
         headerStyle: {
         }
     };
-    _recover(){
+    initDeck(){
 		var initTop = 50
 		var initLeft = screen.width/2-62
 		var count = 26
@@ -64,14 +72,19 @@ class HomeScreen extends React.Component {
 				count -= 0.5;
 				return (<Card key = {count} customStyle={{top: initTop+count,left:initLeft+count}} color={item.color} type={item.type} order={item.order} />)
 		})
-        this.setDeck(this.Decks)
-		return this.Decks
-	};
-    setDeck(cards){
-        Decks = cards;
+		this.setState({Deck:this.Decks});
+	}
+
+    removeCard(i) {
+        this.updateCount(i);
+        console.log(this.state.count);
+        //RemovingCard
+        
     }
-    _updateCount(Deck){
-        {console.log(Deck[0].order)} 
+
+    updateCount(i) {
+        var sum = this.state.count + i;
+        this.setState({count:sum});
     }
 
     render() {
@@ -88,23 +101,23 @@ class HomeScreen extends React.Component {
                         >
                             <Text style={styles.text}>Help</Text>
                         </TouchableOpacity>
-                        {this._recover()}                           
+                                      
                     </View>
                         
                     <View style={styles.redView}>
                         <TouchableOpacity style={styles.box}
-                            onPress={console.log('hi')}
+                            onPress={() => this.removeCard(1)}
                         >
                             <Text style={styles.countButtons}
                             >+1</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.box}
-                            //onPress={() => _updateCount(0)}
+                            onPress={() => this.removeCard(0)}
                         >
                             <Text style={styles.countButtons}>0</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.box}
-                            //onPress={() => _updateCount(-1)}
+                            onPress={() => this.removeCard(-1)}
                         >
                             <Text style={styles.countButtons}>-1</Text>
                         </TouchableOpacity>
