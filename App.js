@@ -14,26 +14,9 @@ import { StackNavigator } from 'react-navigation';
 import newScreen from './Next.js';
 import Card from './Card.js';
 
-var types = [
-    {
-		type :"♠︎",
-		color: "black"
-	},
-    {
-		type: "♦",
-		color: "red",
-	},
-    {
-		type: "♥︎",
-		color: "red"
-	},
-	{
-		type: "♣︎",
-		color: "black"
-	}   
-]
+var s = ["♠︎","♥︎","♦","♣︎"]
+var v = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"]
 
-var orders = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"]
 var screen = Dimensions.get('window')
 
 
@@ -41,45 +24,56 @@ class HomeScreen extends React.Component {
     
     constructor() {
         super();
+        
         this.state = {
             count: 0,
-            Deck: {},
+            Deck: [],
         }
+        
     }
     
-    static navigationOptions = {
-        title: 'Card Counting Buddy',
-        headerStyle: {
-        }
-    };
-    initDeck(){
-		var initTop = 50
-		var initLeft = screen.width/2-62
-		var count = 26
-		var matches = types.map((type)=> {
-			return orders.map((order)=>{
-				count -= 0.5
-                
-				return {
-					type: type.type,
-					color: type.color,
-					order: order
-				}
-			})
-		})
-		matches = _.shuffle(matches.reduce((p,c)=>{return p.concat(c)}))
-		this.Decks = matches.map((item)=> {
-				count -= 0.5;
-				return (<Card key = {count} customStyle={{top: initTop+count,left:initLeft+count}} color={item.color} type={item.type} order={item.order} />)
-		})
-		this.setState({Deck:this.Decks});
-	}
+    componentWillMount(){
+        this.setState({Deck: this.initDeck()})
+    }
 
-    removeCard(i) {
-        this.updateCount(i);
-        console.log(this.state.count);
-        //RemovingCard
+    static navigationOptions = {
+        title: 'Card Counting Buddy',  
+    };
+
+    initDeck() {   
+        var d=[];  
+        for(var i = 0; i < 13; i++){
+            for(var j = 0; j < 4; j++){
+                var c=[2];
+                c[0] = v[i];
+                c[1] = s[j];  
+                d.push(c);
+            }  
+        }
+        return d;
+
+        //TODO: Shuffle Deck
+
+    }
+
+    renderDeck() {
+        console.log(this.state.Deck[0]);
+        return(
+            <Card value={this.state.Deck[0][0]} suit={this.state.Deck[0][1]}/>
+        )
         
+    }
+    
+    removeCard(i) {
+        if(this.state.Deck.length > 0) {
+            this.updateCount(i);
+            var arr = this.state.Deck;
+            arr.splice(0,1);
+            this.setState({Deck: arr});
+        } else {
+            //TODO: Change this to display a score or Restart game
+            console.log("Deck Ran Out");
+        }
     }
 
     updateCount(i) {
@@ -87,6 +81,7 @@ class HomeScreen extends React.Component {
         this.setState({count:sum});
     }
 
+    //TODO: Add a timer and error checking
     render() {
         const { navigate } = this.props.navigation;
         
@@ -101,7 +96,9 @@ class HomeScreen extends React.Component {
                         >
                             <Text style={styles.text}>Help</Text>
                         </TouchableOpacity>
-                                      
+                        <View style={styles.card}>
+                            {this.renderDeck()}
+                        </View>
                     </View>
                         
                     <View style={styles.redView}>
@@ -169,6 +166,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
         backgroundColor: 'rgba(0,0,0,0)',
+    },
+
+    card: {
+        marginLeft: screen.width/2 - 62,
+        top: screen.height/3 - 176,
+        backgroundColor: 'transparent',
     }
     
 

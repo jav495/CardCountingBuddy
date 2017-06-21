@@ -10,29 +10,35 @@ export default class Card extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            init: this.props.customStyle,
-            bodyColor: {backgroundColor: 'white'}
+            bodyColor: {backgroundColor: 'white'},
+            //value: this.props.value,
+            //suit: this.props.suit,
         };
     }
-    componentWillMount(){
-	    this.setState({
-	      	//bodyColor: {backgroundColor: 'rgba(59,55,56,0.5)'}
-	    })
+    
+
+    cardColor(suit){
+        if(this.props.suit == '♥︎' || this.props.suit == '♦'){
+            return 'red';
+        } else{
+            return 'black'
+        }
     }
 
     render(){
+        fontColor = this.cardColor(this.state.suit);
         return(
-            <View style={[styles.card,this.state.bodyColor,this.state.init]}>
-                <View style={styles.leftNumeral}>
-					<Text style={[styles.type,{color: this.props.color}]}>{this.props.type}</Text>
-					<Text style={[styles.order,{color: this.props.color}]}>{this.props.order}</Text>
+            <View style={styles.card}>
+                <View style={styles.top}>
+					<Text style={{color: fontColor}}>{this.props.suit}</Text>
+					<Text style={{color: fontColor}}>{this.props.value}</Text>
 				</View>
-				<View style={styles.rightNumeral}>
-					<Text style={[styles.type,{color: this.props.color}]}>{this.props.type}</Text>
-					<Text style={[styles.order,{color: this.props.color}]}>{this.props.order}</Text>
+				<View style={styles.bottom}>
+					<Text style={{color: fontColor}}>{this.props.suit}</Text>
+					<Text style={{color: fontColor}}>{this.props.value}</Text>
 				</View>
-				<View style={styles.center}>
-					<Text style={[styles.centerLogo,{color: this.props.color}]}>{this.props.type}</Text>
+				<View style={styles.symbol}>
+					<Text style={[styles.symbolFont,{color: fontColor}]}>{this.props.suit}</Text>
 				</View>
             </View>
         )
@@ -40,28 +46,8 @@ export default class Card extends React.Component{
 }
 
 const styles = StyleSheet.create({
-    leftNumeral:{
-        width: 20,
-        height: 40,
-        flexDirection: 'column',
-        position: 'absolute',
-        top:0,
-        left: 0,
-        backgroundColor: 'transparent'
-    },
-    rightNumeral: {
-        width: 20,
-        height: 40,
-        flexDirection: 'column',
-        position: 'absolute',
-        bottom:0,
-        right: 0,
-        backgroundColor: 'transparent'
-    },
-    suit: {
-        height: 20,
-        textAlign: 'center'
-    },
+
+
     card: {
         width: 124,
         height: 176,
@@ -71,23 +57,36 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    order: {
-		height: 20,
-		textAlign: 'center',
-	},
-	center: {
-		width: 80,
-		height: 80,
-		alignItems: 'center',
-		justifyContent: 'center',
-		backgroundColor: 'transparent'
-	},
-	centerLogo: {
-		fontSize: 80,
-		flex: 1,
-		textAlign: 'center',
-		lineHeight: 90
-	}
-});
+    symbol: {
+        width: 80,
+        height: 80,
+        backgroundColor: 'transparent',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    symbolFont: {
+        fontSize: 80,
+        flex: 1,
+        textAlign: 'center',
+        lineHeight: 90,
+    },
+    top: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        backgroundColor: 'transparent',
+        width: 20,
+        height: 40,
+        flexDirection: 'column',
+    },
+    bottom: {
+        width: 20,
+        height: 40,
+        flexDirection: 'column',
+        position: 'absolute',
+        bottom:0,
+        right: 0,
+        backgroundColor: 'transparent'    
+    }
 
-//module.exports = Card
+});
