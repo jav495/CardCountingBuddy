@@ -11,8 +11,6 @@ export default class Card extends React.Component{
         super(props);
         this.state = {
             bodyColor: {backgroundColor: 'white'},
-            //value: this.props.value,
-            //suit: this.props.suit,
         };
     }
     

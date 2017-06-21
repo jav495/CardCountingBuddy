@@ -9,7 +9,6 @@ import {
     TouchableOpacity,
     Dimensions,
 } from 'react-native';
-import _ from "underscore";
 import { StackNavigator } from 'react-navigation';
 import newScreen from './Next.js';
 import Card from './Card.js';
@@ -26,19 +25,30 @@ class HomeScreen extends React.Component {
         super();
         
         this.state = {
-            count: 0,
+            score: 0,
             Deck: [],
         }
         
     }
-    
+
     componentWillMount(){
-        this.setState({Deck: this.initDeck()})
+        this.initDeck();
     }
 
     static navigationOptions = {
         title: 'Card Counting Buddy',  
     };
+
+    shuffle(arr) {
+        var array = arr
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        this.setState({Deck: array});
+    }
 
     initDeck() {   
         var d=[];  
@@ -50,47 +60,52 @@ class HomeScreen extends React.Component {
                 d.push(c);
             }  
         }
-        return d;
-
-        //TODO: Shuffle Deck
-
+        this.shuffle(d);
     }
 
     renderDeck() {
-        console.log(this.state.Deck[0]);
-        return(
-            <Card value={this.state.Deck[0][0]} suit={this.state.Deck[0][1]}/>
-        )
-        
+        if(this.state.Deck.length > 0){
+            return(
+                <Card value={this.state.Deck[0][0]} suit={this.state.Deck[0][1]}/>
+            )
+        } else {
+            return(
+                <View>
+                    <Text style={styles.score}>{"Score: "}</Text>
+                    <Text style={styles.score}>{this.state.score + "/52"}</Text>
+                </View>
+            )
+        }
     }
     
     removeCard(i) {
-        if(this.state.Deck.length > 0) {
-            this.updateCount(i);
+        if(this.state.Deck.length > -1) {
             var arr = this.state.Deck;
+            if(i == 1){
+                if(arr[0][0] == "2" || arr[0][0] == "3" || arr[0][0] == "4" || arr[0][0] == "5" || arr[0][0] == "6"){
+                    this.setState({score: this.state.score+1})
+                }
+            }else if(i == 0){
+                if(arr[0][0] == "7" || arr[0][0] == "8" || arr[0][0] == "9"){
+                    this.setState({score: this.state.score+1})
+                }
+            }else if(i == -1){
+                if(arr[0][0] == "10" || arr[0][0] == "J" || arr[0][0] == "Q" || arr[0][0] == "K" || arr[0][0] == "A"){
+                    this.setState({score: this.state.score+1})
+                }
+            }
+            console.log(arr[0][0] + i + this.state.score);
             arr.splice(0,1);
             this.setState({Deck: arr});
-        } else {
-            //TODO: Change this to display a score or Restart game
-            console.log("Deck Ran Out");
         }
     }
 
-    updateCount(i) {
-        var sum = this.state.count + i;
-        this.setState({count:sum});
-    }
-
-    //TODO: Add a timer and error checking
     render() {
-        const { navigate } = this.props.navigation;
-        
-        
+        const { navigate } = this.props.navigation;    
         return(
-            
             <View style={styles.parentView}>
                 <Image source={require('./background.jpg')} style={styles.parentView}>
-                    <View style={styles.yellowView}>
+                    <View style={styles.topView}>
                         <TouchableOpacity
                             onPress={() => navigate('Help')}
                         >
@@ -100,8 +115,7 @@ class HomeScreen extends React.Component {
                             {this.renderDeck()}
                         </View>
                     </View>
-                        
-                    <View style={styles.redView}>
+                    <View style={styles.buttonView}>
                         <TouchableOpacity style={styles.box}
                             onPress={() => this.removeCard(1)}
                         >
@@ -131,11 +145,11 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         backgroundColor: '#000000',
     },
-    yellowView: {
+    topView: {
         flex:1,
         backgroundColor: 'transparent',
     },
-    redView: {
+    buttonView: {
         flex: 1,
         backgroundColor: 'transparent',
     },
@@ -172,10 +186,13 @@ const styles = StyleSheet.create({
         marginLeft: screen.width/2 - 62,
         top: screen.height/3 - 176,
         backgroundColor: 'transparent',
-    }
-    
-
+    },
+    score: {
+        fontSize: 40,
+        color: 'white'
+    },
 });
+
 const SimpleApp = StackNavigator({
     Home: { screen: HomeScreen, },
     Help: { screen: newScreen, },
