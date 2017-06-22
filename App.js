@@ -47,7 +47,7 @@ class HomeScreen extends React.Component {
             array[i] = array[j];
             array[j] = temp;
         }
-        this.setState({Deck: array});
+        this.setState({Deck: array, score: 0});
     }
 
     initDeck() {   
@@ -66,20 +66,27 @@ class HomeScreen extends React.Component {
     renderDeck() {
         if(this.state.Deck.length > 0){
             return(
-                <Card value={this.state.Deck[0][0]} suit={this.state.Deck[0][1]}/>
+                <View>
+                    <Card value={this.state.Deck[0][0]} suit={this.state.Deck[0][1]}/>
+                </View>
             )
         } else {
             return(
                 <View>
-                    <Text style={styles.score}>{"Score: "}</Text>
-                    <Text style={styles.score}>{this.state.score + "/52"}</Text>
+                    <TouchableOpacity
+                        onPress={() => this.initDeck()}
+                    >
+                        <Text style={styles.score}>{"Score: "}</Text>
+                        <Text style={styles.score}>{this.state.score + "/52"}</Text>
+                        <Text style={styles.restart}>tap to restart</Text>
+                    </TouchableOpacity>
                 </View>
             )
         }
     }
     
     removeCard(i) {
-        if(this.state.Deck.length > -1) {
+        if(this.state.Deck.length > 0) {
             var arr = this.state.Deck;
             if(i == 1){
                 if(arr[0][0] == "2" || arr[0][0] == "3" || arr[0][0] == "4" || arr[0][0] == "5" || arr[0][0] == "6"){
@@ -103,18 +110,19 @@ class HomeScreen extends React.Component {
     render() {
         const { navigate } = this.props.navigation;    
         return(
-            <View style={styles.parentView}>
-                <Image source={require('./background.jpg')} style={styles.parentView}>
+                <Image source={require('./stars.jpg')} style={styles.parentView}>
+
                     <View style={styles.topView}>
                         <TouchableOpacity
                             onPress={() => navigate('Help')}
                         >
                             <Text style={styles.text}>Help</Text>
                         </TouchableOpacity>
-                        <View style={styles.card}>
-                            {this.renderDeck()}
-                        </View>
+                        
+                        {this.renderDeck()}
+                        
                     </View>
+
                     <View style={styles.buttonView}>
                         <TouchableOpacity style={styles.box}
                             onPress={() => this.removeCard(1)}
@@ -134,7 +142,6 @@ class HomeScreen extends React.Component {
                         </TouchableOpacity>
                     </View>
                 </Image>    
-            </View>
         );
     }
 }
@@ -142,15 +149,23 @@ class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
     parentView: {
         flex: 1,
-        justifyContent: 'flex-start',
+        height: null,
+        width: null,
+        flexDirection: 'column',
+        alignItems: 'center',
         backgroundColor: '#000000',
     },
     topView: {
-        flex:1,
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: 'transparent',
+        width: screen.width,
     },
     buttonView: {
         flex: 1,
+        justifyContent: 'center',
         backgroundColor: 'transparent',
     },
 
@@ -158,37 +173,51 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         paddingLeft: 10,
-        marginTop: 10,
+        marginBottom: 10,
+        borderRadius: 100,
         fontFamily: 'helvetica',
-        backgroundColor: 'rgba(0,0,0,.5)',
+        backgroundColor: 'rgba(0,100,250,.5)',
         width: 50,
     },
 
     box: {
+        flex: 1,
         marginTop: 10,
-        marginLeft: 60,
-        marginRight: 60,
+        marginBottom: 10,
+        marginLeft: (screen.width-250)/2,
+        marginRight: (screen.width-250)/2,
         width: 250,
         height: 60,
-        backgroundColor: 'rgba(0,0,0,.5)'
+        borderRadius: 100,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0,100,250,.5)'
     },
 
-    countButtons: {
-        textAlign: 'center',
+    countButtons: {       
         fontSize: 32,
-        padding: 10,
         fontWeight: 'bold',
         color: 'white',
-        backgroundColor: 'rgba(0,0,0,0)',
+        backgroundColor: 'transparent',
     },
 
     card: {
-        marginLeft: screen.width/2 - 62,
-        top: screen.height/3 - 176,
+
+        
         backgroundColor: 'transparent',
     },
     score: {
         fontSize: 40,
+        fontWeight: 'bold',
+        textShadowColor: 'black',
+        textShadowOffset: {width: 5, height: 5},
+        color: 'white'
+    },
+    restart: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        textShadowColor: 'black',
+        textShadowOffset: {width: 5, height: 5},
         color: 'white'
     },
 });
