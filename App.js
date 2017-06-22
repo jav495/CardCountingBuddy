@@ -10,6 +10,7 @@ import {
     Dimensions,
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
+import { Stopwatch } from 'react-native-stopwatch-timer';
 import newScreen from './Next.js';
 import Card from './Card.js';
 
@@ -28,11 +29,23 @@ class HomeScreen extends React.Component {
             score: 0,
             Deck: [],
             count: 0,
-        }   
+            stopwatchStart: false,
+            stopwatchReset: false,
+            finish: 0,
+        }
+        this.toggleStopwatch = this.toggleStopwatch.bind(this);
+        this.resetStopwatch = this.resetStopwatch.bind(this);   
     }
 
     componentWillMount(){
         this.initDeck();
+    }
+    toggleStopwatch() {
+        this.setState({stopwatchStart: !this.state.stopwatchStart, stopwatchReset: false});
+    }
+
+    resetStopwatch() {
+        this.setState({stopwatchStart: false, stopwatchReset: true});
     }
 
     static navigationOptions = {
@@ -47,7 +60,7 @@ class HomeScreen extends React.Component {
             array[i] = array[j];
             array[j] = temp;
         }
-        this.setState({Deck: array, score: 0, count: 0});
+        this.setState({Deck: array, score: 0, count: 0, finish: 0});
     }
 
     initDeck() {   
@@ -61,6 +74,7 @@ class HomeScreen extends React.Component {
             }  
         }
         this.shuffle(d);
+        this.resetStopwatch();
     }
 
     renderDeck() {
@@ -73,19 +87,17 @@ class HomeScreen extends React.Component {
         } else {
             return(
                 <View>
-                    <TouchableOpacity
-                        onPress={() => this.initDeck()}
-                    >
-                        <Text style={styles.score}>{"Score: "}</Text>
-                        <Text style={styles.score}>{this.state.score + "/52"}</Text>
-                        <Text style={styles.restart}>tap to restart</Text>
-                    </TouchableOpacity>
+                    <Text style={styles.score}>{"Score: "}</Text>
+                    <Text style={styles.score}>{this.state.score + "/52"}</Text>  
                 </View>
             )
         }
     }
     
     removeCard(i) {
+        if(this.state.Deck.length == 52 && this.state.finish == 0){
+            this.toggleStopwatch();
+        }
         if(this.state.Deck.length > 0) {
             var arr = this.state.Deck;
             if(i == 1){
@@ -106,14 +118,17 @@ class HomeScreen extends React.Component {
             arr.splice(0,1);
             this.setState({Deck: arr});
         }
+        if(this.state.Deck.length == 0 && this.state.finish == 0){
+            this.toggleStopwatch();
+            this.setState({finish: 1});
+        }
     }
 
     render() {
         const { navigate } = this.props.navigation;    
         return(
                 <Image source={require('./stars.jpg')} style={styles.parentView}>
-
-                    <View style={styles.topView}>
+                    <View style={styles.timeView}>
                         <View style={styles.accessoryView}>
                             <TouchableOpacity
                                 style={styles.box2}
@@ -121,6 +136,14 @@ class HomeScreen extends React.Component {
                             >
                                 <Text style={styles.text}>Help</Text>
                             </TouchableOpacity>
+
+                            <Stopwatch style={styles.box2}
+                                start={this.state.stopwatchStart}
+                                reset={this.state.stopwatchReset}
+                                options={options}
+                                getTime={this.getFormattedTime}
+                            />
+                            
                             <TouchableOpacity
                                 style={styles.box2}
                                 onPress={() => this.initDeck()}
@@ -128,6 +151,11 @@ class HomeScreen extends React.Component {
                                 <Text style={styles.text}>Reset</Text>
                             </TouchableOpacity>
                         </View>
+                        
+                    </View>
+
+                    <View style={styles.topView}>
+                        
                         {this.renderDeck()}
                         
                     </View>
@@ -155,6 +183,17 @@ class HomeScreen extends React.Component {
     }
 }
 
+const options = {
+  container: {
+    backgroundColor: 'rgba(0,100,250,.7)',
+    padding: 5,
+    borderRadius: 100,
+    width: 220,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+}
+
 const styles = StyleSheet.create({
     parentView: {
         flex: 1,
@@ -164,16 +203,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#000000',
     },
-    topView: {
+    timeView: {
         flex: 1,
-        flexDirection: 'column',
+        marginTop: 10,
+        backgroundColor: 'transparent',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    topView: {
+        flex: 7,
+        width: screen.width,
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'transparent',
-        width: screen.width,
     },
     buttonView: {
-        flex: 1,
+        flex: 7,
         justifyContent: 'center',
         backgroundColor: 'transparent',
     },
@@ -207,8 +253,8 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         marginTop: 10,
         alignItems: 'center',
-        marginLeft: 10,
         marginRight: 10,
+        marginLeft: 10,
     },
 
     countButtons: {       

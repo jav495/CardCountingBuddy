@@ -55,8 +55,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     symbol: {
-        width: 80,
-        height: 80,
+        width: 100,
+        height: 100,
         backgroundColor: 'transparent',
         alignItems: 'center',
         justifyContent: 'center'
@@ -69,8 +69,8 @@ const styles = StyleSheet.create({
     },
     top: {
         position: 'absolute',
-        top: 0,
-        left: 0,
+        top: 5,
+        left: 5,
         backgroundColor: 'transparent',
         width: 20,
         height: 40,
