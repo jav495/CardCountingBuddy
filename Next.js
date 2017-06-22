@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 export default class Next extends React.Component {
     static navigationOptions = {
-        title: 'Help',
+        //title: 'Help',
     };
 
     render() {
@@ -32,7 +32,7 @@ export default class Next extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#6C7A89',
+        backgroundColor: 'transparent',
         width: null,
         height: null,
     },
@@ -41,5 +41,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'white', 
         padding: 5,
+        marginLeft: 15,
+        marginRight: 15
     }
 });

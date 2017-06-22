@@ -27,8 +27,8 @@ class HomeScreen extends React.Component {
         this.state = {
             score: 0,
             Deck: [],
-        }
-        
+            count: 0,
+        }   
     }
 
     componentWillMount(){
@@ -47,7 +47,7 @@ class HomeScreen extends React.Component {
             array[i] = array[j];
             array[j] = temp;
         }
-        this.setState({Deck: array, score: 0});
+        this.setState({Deck: array, score: 0, count: 0});
     }
 
     initDeck() {   
@@ -92,16 +92,17 @@ class HomeScreen extends React.Component {
                 if(arr[0][0] == "2" || arr[0][0] == "3" || arr[0][0] == "4" || arr[0][0] == "5" || arr[0][0] == "6"){
                     this.setState({score: this.state.score+1})
                 }
+                this.setState({count: this.state.count+1})
             }else if(i == 0){
                 if(arr[0][0] == "7" || arr[0][0] == "8" || arr[0][0] == "9"){
                     this.setState({score: this.state.score+1})
-                }
+                }             
             }else if(i == -1){
                 if(arr[0][0] == "10" || arr[0][0] == "J" || arr[0][0] == "Q" || arr[0][0] == "K" || arr[0][0] == "A"){
                     this.setState({score: this.state.score+1})
                 }
+                this.setState({count: this.state.count-1})
             }
-            console.log(arr[0][0] + i + this.state.score);
             arr.splice(0,1);
             this.setState({Deck: arr});
         }
@@ -113,12 +114,20 @@ class HomeScreen extends React.Component {
                 <Image source={require('./stars.jpg')} style={styles.parentView}>
 
                     <View style={styles.topView}>
-                        <TouchableOpacity
-                            onPress={() => navigate('Help')}
-                        >
-                            <Text style={styles.text}>Help</Text>
-                        </TouchableOpacity>
-                        
+                        <View style={styles.accessoryView}>
+                            <TouchableOpacity
+                                style={styles.box2}
+                                onPress={() => navigate('Help')}
+                            >
+                                <Text style={styles.text}>Help</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.box2}
+                                onPress={() => this.initDeck()}
+                            >
+                                <Text style={styles.text}>Reset</Text>
+                            </TouchableOpacity>
+                        </View>
                         {this.renderDeck()}
                         
                     </View>
@@ -128,17 +137,17 @@ class HomeScreen extends React.Component {
                             onPress={() => this.removeCard(1)}
                         >
                             <Text style={styles.countButtons}
-                            >+1</Text>
+                            >{this.state.count+1}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.box}
                             onPress={() => this.removeCard(0)}
                         >
-                            <Text style={styles.countButtons}>0</Text>
+                            <Text style={styles.countButtons}>{this.state.count}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.box}
                             onPress={() => this.removeCard(-1)}
                         >
-                            <Text style={styles.countButtons}>-1</Text>
+                            <Text style={styles.countButtons}>{this.state.count-1}</Text>
                         </TouchableOpacity>
                     </View>
                 </Image>    
@@ -168,16 +177,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: 'transparent',
     },
-
+    accessoryView:{
+        flexDirection: 'row',
+    },
     text: {
         color: 'white',
         fontWeight: 'bold',
-        paddingLeft: 10,
-        marginBottom: 10,
-        borderRadius: 100,
         fontFamily: 'helvetica',
-        backgroundColor: 'rgba(0,100,250,.5)',
-        width: 50,
+    
     },
 
     box: {
@@ -192,6 +199,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'rgba(0,100,250,.5)'
+    },
+    box2: {
+        width: 60,
+        borderRadius: 100,
+        backgroundColor: 'rgba(0,100,250,.7)',
+        marginBottom: 20,
+        marginTop: 10,
+        alignItems: 'center',
+        marginLeft: 10,
+        marginRight: 10,
     },
 
     countButtons: {       
